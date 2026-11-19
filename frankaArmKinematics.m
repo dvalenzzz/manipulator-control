@@ -113,6 +113,22 @@ end
 fprintf("FK    vs Panda: max %.2e over %d poses\n", max(errFK), nTests);
 fprintf("J     vs Panda: max %.2e over %d poses\n", max(errJ), nTests);
 
+%%Pinv for Inv. Kinematics
+R = T(1:3,1:3); p = T(1:3,4);
+lambda= .1;
+pinvDLS = J'*(J*J'+lambda^2*eye(6))^-1;
+twist_sym = casadi.SX.sym('Tw'6);
+x_ref = casadi.SX.sym('xref',6);
+thetadot_cmd = pinvDLS*twist_sym; %theta dot will depend on configuration and desired twist. 
+
+e_pose = x_ref(1:3)-p;
+e_orientation =0;
+% e_w = .5*
+% e  = real([L(3,2); L(1,3); L(2,1); Td(1:3,4) - p]);
+% qi = qi + pinv(JsFun(qi)) * e;
+
+
+
 function sequentialTransform = homoTransform(x,y,z,r) %currently only valid for rotations about the local x-axis. Full support should include product of RxRyRz
 
 sequentialTransform = [1 0 0 x;
